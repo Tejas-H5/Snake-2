@@ -21,6 +21,7 @@ var prevZoom = 1.0;
 var timer = -1.0;
 
 var scaleAmount = 1.0;
+//is this the first time opening the game?
 var started = false;
 var ded = 1;
 
@@ -102,18 +103,20 @@ function Food(x,y,w,h,c){
 }
 
 function reset(){
-  started = true;
-  foods = [];
-  snek = [];
-  c = 0;
-  timer = 30*60;
-  zoom = 1;
-  prevZoom = 1;
-  scaleAmount = 1;
-  ded = 1;
-  
-  for(var i = 0;  i < 10; i++){
-    snek.push(new Point(mouseX + i* snekSize * 2,mouseY));
+  if(timer < 0){
+	started = true;
+	foods = [];
+	snek = [];
+	c = 0;
+	timer = 30*60;
+	zoom = 1;
+	prevZoom = 1;
+	scaleAmount = 1;
+	ded = 1;
+
+	for(var i = 0;  i < 10; i++){
+	snek.push(new Point(mouseX + i* snekSize * 2,mouseY));
+	}
   }
 }
 
