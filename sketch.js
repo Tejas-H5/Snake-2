@@ -123,6 +123,10 @@ function keyPressed(){
   }
 }
 
+function mousePressed(){
+  reset();
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   //need this to not 'seg fault' at the start
