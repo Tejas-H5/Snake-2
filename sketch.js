@@ -113,9 +113,9 @@ function reset(){
 	prevZoom = 1;
 	scaleAmount = 1;
 	ded = 1;
-
+	snakeHead = 0;
 	for(var i = 0;  i < 10; i++){
-	snek.push(new Point(mouseX + i* snekSize * 2,mouseY));
+		snek.push(new Point(mouseX + i* snekSize * 2,mouseY));
 	}
   }
 }
@@ -147,11 +147,14 @@ function drawSnek(){
   fill(snekColor);
   for(var i = 0;i < snek.length; i++){
     var p = snek[i];
+	fill((getSegmentIndex(snek.length-i)/snek.length)*155 + 100);
     rect(p.x,p.y,snekSize,snekSize);
 	//text(i,p.x,p.y);
   }
   fill(snekHeadColor);
-  rect(snek[0].x,snek[0].y,10,10);
+  var head = snek[getSegmentIndex(0)];
+  //var head = snek[0];
+  rect(head.x,head.y,snekSize,snekSize);
 }
 
 function drawFood(){
@@ -163,11 +166,28 @@ function drawFood(){
   }
 }
 
+var snakeHead = 0;
+function getSegmentIndex(numFromHead){	
+	return (snakeHead + numFromHead) % snek.length;
+}
+function getSegment(numFromHead){
+	return snek[getSegmentIndex(numFromHead)];
+}
+
+var numToAdd = 0;
 function growSnek(num){
   if(snek.length>=1000){return;}
-  var p = snek[snek.length-1];
-  for(var i = 0; i < num;i++){
-    snek.push(new Point(p.x, p.y));
+  numToAdd += num;
+}
+
+function pushSegment(){
+  if(numToAdd<=0)
+	return;
+  numToAdd--;
+  var index = getSegmentIndex(1);
+  snek.splice(index,0,new Point(snek[index].x,snek[index].y));
+  if (index < snakeHead){
+	snakeHead++;
   }
 }
 
@@ -198,9 +218,9 @@ function draw() {
   drawFood();
   
   //collide the head with every other snake segment and draw collision  
-  var head = snek[0];
+  var head = snek[getSegmentIndex(0)];
   for(var i = 3; i < snek.length; i++){
-    var segment = snek[i];
+    var segment = snek[getSegmentIndex(i)];
     if(intersect(head.x,head.y,snekSize,snekSize,segment.x, segment.y, snekSize, snekSize)){
       fill(collisionColor);
       stroke(collisionColor);
@@ -235,32 +255,32 @@ function draw() {
 	var mouseXPos = zoom * mouseX;
 	var mouseYPos = zoom * mouseY;
 	
-    var xDelta = (mouseXPos-snekSize/2) - snek[0].x;
-    var yDelta = (mouseYPos-snekSize/2) - snek[0].y;
+    var xDelta = (mouseXPos-snekSize/2) - snek[getSegmentIndex(0)].x;
+    var yDelta = (mouseYPos-snekSize/2) - snek[getSegmentIndex(0)].y;
 	console.log(snekSize);
     var mag = sqrt(sqrMagnitude(xDelta,yDelta));
     if(mag < snekSize){
       //do nothing for now
     } else {
       xDelta/=mag; yDelta/=mag;
-      //move the segment from the back of the snake to the front of the snake in the direction of the mouse
-	  //propagate xy to the end of the list, basically deleting the last one
-	  for(var i = snek.length-1; i>0;i--){
-		console.log(i);
-		snek[i].x=snek[i-1].x;
-		snek[i].y=snek[i-1].y;
-	  }
-	  var newHead = snek[0];
-	  newHead.x += xDelta*snekSize;
-	  newHead.y += yDelta*snekSize;
+	  
+	  //Instead, make the new head the last element
+	  var oldHead = snek[snakeHead];
+	  snakeHead = getSegmentIndex(snek.length-1);
+	  var newHead = snek[snakeHead];
+	  newHead.x = oldHead.x + xDelta*snekSize;
+	  newHead.y = oldHead.y + yDelta*snekSize;
+	  
+	  //add a segment to the snake if there are any left to add
+	  pushSegment();
     }
     
     timer --;
     
-    //Add a new food every 120 frames, or 2 seconds
+    //Add a new food every c frames, or c/60 seconds
     if(c > 60){
-      var w = random(2,40) * zoom;
-      var h = random(2,40) * zoom;
+      var w = random(snekSize,40) * zoom;
+      var h = random(snekSize,40) * zoom;
       var x = random(zoom*windowWidth-w);
       var y = random(zoom*windowHeight-h);
       foods.push(new Food(x,y,w,h,randomHue()));
