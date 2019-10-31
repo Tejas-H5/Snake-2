@@ -219,7 +219,7 @@ function draw() {
   
   //collide the head with every other snake segment and draw collision  
   var head = snek[getSegmentIndex(0)];
-  for(var i = 3; i < snek.length; i++){
+  for(var i = 5; i < snek.length; i++){
     var segment = snek[getSegmentIndex(i)];
     if(intersect(head.x,head.y,snekSize,snekSize,segment.x, segment.y, snekSize, snekSize)){
       fill(collisionColor);
