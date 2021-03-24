@@ -135,7 +135,7 @@ function drawDeathMessage() {
   if (!started) {
     text(
       "Click to start.\n" + 
-      "Use the mouse to control where the snake goes manually",
+      "Use the mouse to control where the snake goes",
       windowWidth / 2,
       windowHeight / 2
     );
