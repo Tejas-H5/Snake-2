@@ -1,8 +1,3 @@
-//A slightly different version of snake known as snek
-//Somewhat inspired by slither.io, but it looks quite different so
-//I(Tejas Hegde)'ll take 90% credit the other 10% being split between processing and slither.io 9:1
-//Was initialy in java, but converted it into js so I could put it onto a website
-
 var snekColor;
 var snekHeadColor;
 var collisionColor;
